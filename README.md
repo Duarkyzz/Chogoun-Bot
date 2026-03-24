@@ -92,4 +92,6 @@ Desenvolvido por um desenvolvedor em evolução, com foco em sistemas inteligent
 
 Link: https://discord.com/oauth2/authorize?client_id=1485098719203561656&permissions=13839366&integration_type=0&scope=bot+applications.commands
 
+---
+
 _"Aqueles que habitam meu domínio não precisam compreender minha grandiosidade... apenas obedecer ao fluxo das minhas decisões."_ 🌊
