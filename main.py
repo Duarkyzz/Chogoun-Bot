@@ -102,13 +102,14 @@ class Client(discord.Client):
 
         if message.content.startswith("!ban"):
             if not message.author.guild_permissions.ban_members:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo...",
                     f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
                 ))
                 return
+            
             if len(message.mentions) == 0:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo..",
                     "Indique um alvo para banir, ou será considerado um ato de insubordinação."
                 ))
@@ -124,13 +125,13 @@ class Client(discord.Client):
         
         if message.content.startswith("!kick"):
             if not message.author.guild_permissions.kick_members:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo...",
                     f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
                 ))
                 return
             if len(message.mentions) == 0:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo..",
                     "Indique um alvo para expulsar, ou será considerado um ato de insubordinação."
                 ))
@@ -146,7 +147,7 @@ class Client(discord.Client):
 
         if message.content.startswith("!mute"):
             if not message.author.guild_permissions.mute_members:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo...",
                     f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
                 ))
@@ -155,7 +156,7 @@ class Client(discord.Client):
             args = message.content.split()
 
             if len(message.mentions) == 0 or len(args) < 3:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Humano tolo..",
                     "Indique um alvo e um tempo para silenciar, ou será considerado um ato de insubordinação. O tempo deve ser indicado com um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m"
                 ))
@@ -167,7 +168,7 @@ class Client(discord.Client):
             duration = parse_time(time_str)
 
             if duration is None:
-                await message.channel.send(embad=chogoun_embed(
+                await message.channel.send(embed=chogoun_embed(
                     "Imprestável humano..",
                     "Tempo inválido. Use um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m"
                 ))
@@ -181,13 +182,13 @@ class Client(discord.Client):
 
         if message.content.startswith("!unmute"):
                 if not message.author.guild_permissions.mute_members:
-                    await message.channel.send(embad=chogoun_embed(
+                    await message.channel.send(embed=chogoun_embed(
                         "Humano tolo...",
                         f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
                     ))
                     return
                 if len(message.mentions) == 0:
-                    await message.channel.send(embad=chogoun_embed(
+                    await message.channel.send(embed=chogoun_embed(
                         "Imprestável humano..",
                         "Indique um alvo para remover o silêncio, ou será considerado um ato de insubordinação."
                     ))
