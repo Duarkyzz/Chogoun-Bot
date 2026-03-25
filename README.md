@@ -35,13 +35,20 @@ Comandos administrativos disponíveis:
 - `!kick` — Expulsar usuários  
 - `!mute` — Silenciar usuários por tempo determinado  
 
+### 🎶 Música Disponível para uso!:
+
+- `!play` — Colocando o link na frente ele já reconhece as músicas pelo link, mas precisa ser do youtube
+- `!pause` — Pausa a música que está tocando
+- `!skip` — Pula a música atual
+- `!stop` — Para a música
+- `!resume` — Continua a música se estiver pausado
+
 ---
 
 ## 🚧 Funcionalidades Futuras
 
 O império de Chogoun continuará a se expandir:
 
-- 🎵 Integração com YouTube  
 - 📡 Integração com Twitch  
 - 🎫 Sistema de tickets e suporte  
 - 🏷️ Gerenciamento avançado de cargos  
