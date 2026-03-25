@@ -1,6 +1,3 @@
-
-from pyexpat.errors import messages
-
 from keep_alive import keep_alive
 
 import discord
@@ -94,26 +91,54 @@ def chogoun_ia_embed(titulo, descricao):
 
 class Client(discord.Client):
     async def on_ready(self):
-        print(f'Logou em {self.user}')
+       print(f'Logou em {self.user}')
+       await self.change_presence(
+           activity=discord.Game(name="Governando os sete mares 🌊")
+    )
+        
+    async def on_guild_join(self, guild):
+        general = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
+
+        if general and general.permissions_for(guild.me).send_messages:
+            await general.send(embed=chogoun_embed(
+                "Saudações, súditos do reino!",
+                "Eu sou Chogoun, o imperador dos mares 🌊"
+            ))
 
     async def on_message(self, message):
         if message.author == self.user:
             return
         if message.content.startswith("!question"):
-            question = message.content[len("!question "):]
+            if len(message.content.split()) == 1:
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "Faça uma pergunta após o comando."
+                ))
+                return
+            
+            question = message.content[len("!question"):]
+
             response = group_client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
                     {"role": "system", "content": personality},
                     {"role": "user", "content": question}
-                ]   
-            )
+                ]
+             )
+
         
-        embed = chogoun_ia_embed(
-            titulo="🌊 Pergunta ao Imperador",
-            descricao=response.choices[0].message.content.strip()
-        )
-        await message.channel.send(embed=embed)
+            embed = chogoun_ia_embed(
+                titulo="🌊 Pergunta ao Imperador",
+                descricao=response.choices[0].message.content.strip()
+           )
+            await message.channel.send(embed=embed)
+        
+            if len(message.content.split()) == 1:
+              await message.channel.send(embed=chogoun_embed(
+            "⚠️ ATENÇÃO HUMANO",
+            "Faça uma pergunta após o comando."
+        ))
+              return
 
         if message.content.startswith("!ban"):
             if not message.author.guild_permissions.ban_members:
@@ -254,7 +279,14 @@ class Client(discord.Client):
                 }
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url, download=False)
+                    try:
+                        info = ydl.extract_info(url, download=False)
+                    except Exception:
+                        await message.channel.send(embed=chogoun_embed(
+                            "Nunca ouvi falar disso, humano...",
+                            "Não foi possível encontrar ou reproduzir o áudio. Verifique a URL ou termo de pesquisa e tente novamente."))
+                        return
+                
                     audio_url = info['url'] 
 
                 thumbnail = info.get('thumbnail') or "https://i.imgur.com/8Km9tLL.png"
@@ -333,13 +365,6 @@ class Client(discord.Client):
                 "Música pulada."
             ))
 
-        async def on_guild_join(self, guild):
-            general = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
-            if general and general.permissions_for(guild.me).send_messages:
-                await general.send(embed=chogoun_embed(
-                    "Saudações, súditos do reino de [NOME DO SERVIDOR]!",
-                    "Eu sou Chogoun, o imperador e divindade dos mares, e estou aqui para governar e proteger este servidor com minha sabedoria e poder. Preparem-se para uma era de prosperidade e ordem sob meu comando supremo! 🌊👑"
-                ))  
         
 
 
