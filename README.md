@@ -1,4 +1,5 @@
 # 🌊 Chogoun Bot — O Imperador dos Sete Mares
+Versão 1.0a
 
 ## 📜 Sobre
 
