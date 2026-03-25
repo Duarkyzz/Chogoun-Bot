@@ -1,6 +1,8 @@
 
 from pyexpat.errors import messages
 
+from keep_alive import keep_alive
+
 import discord
 
 from groq import Groq
@@ -348,4 +350,5 @@ intents.guilds = True
 intents.members = True  
 
 client = Client(intents=intents)
+keep_alive()
 client.run(TOKEN)
