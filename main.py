@@ -65,7 +65,7 @@ def chogoun_embed(titulo, descricao):
     embed = discord.Embed(
         title=titulo,
         description=descricao,
-        color=0x0a1aff
+        color=0x48FF68
     )
     embed.set_footer(text="Chogoun • Imperador dos Mares 🌊")
     return embed
@@ -74,10 +74,19 @@ def chogoun_music_embed(titulo, descricao, thumbnail_url):
     embed = discord.Embed(
         title=titulo,
         description=descricao,
-        color=0x0a1aff
+        color=0x48FF68
     )
     embed.set_thumbnail(url=thumbnail_url)
     embed.set_footer(text="Chogoun • Imperador dos Mares 🌊")
+    return embed
+
+def chogoun_ia_embed(titulo, descricao):
+    embed = discord.Embed(
+        title=titulo,
+        description=descricao,
+        color=0x48FF68
+    )
+    embed.set_footer(text="Resposta gerada por Chogoun, o imperador e divindade dos mares 🌊")
     return embed
           
 
@@ -97,8 +106,12 @@ class Client(discord.Client):
                     {"role": "user", "content": question}
                 ]   
             )
-            
-            await message.channel.send(response.choices[0].message.content)
+        
+        embed = chogoun_ia_embed(
+            titulo="🌊 Pergunta ao Imperador",
+            descricao=response.choices[0].message.content.strip()
+        )
+        await message.channel.send(embed=embed)
 
         if message.content.startswith("!ban"):
             if not message.author.guild_permissions.ban_members:
