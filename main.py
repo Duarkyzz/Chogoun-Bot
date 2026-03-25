@@ -1,3 +1,4 @@
+
 from pyexpat.errors import messages
 
 import discord
@@ -7,7 +8,7 @@ from groq import Groq
 from datetime import timedelta
 
 import os
-from dotenv import load_dotenv  
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -59,6 +60,26 @@ Ainz não existe, ele é apenas uma inspiração para a personalidade que você 
 
 Pare de mencionar expressões em terceira pessoa, pois isso não condiz com a personalidade que você deve adotar.
 """
+
+def chogoun_embed(titulo, descricao):
+    embed = discord.Embed(
+        title=titulo,
+        description=descricao,
+        color=0x0a1aff
+    )
+    embed.set_footer(text="Chogoun • Imperador dos Mares 🌊")
+    return embed
+
+def chogoun_music_embed(titulo, descricao, thumbnail_url):
+    embed = discord.Embed(
+        title=titulo,
+        description=descricao,
+        color=0x0a1aff
+    )
+    embed.set_thumbnail(url=thumbnail_url)
+    embed.set_footer(text="Chogoun • Imperador dos Mares 🌊")
+    return embed
+          
 
 class Client(discord.Client):
     async def on_ready(self):
@@ -126,9 +147,140 @@ class Client(discord.Client):
                 return
 
             await member.timeout(duration, reason="Silenciado por ordem do imperador Chogoun, por desrespeito ou comportamento inadequado.")    
-            await message.channel.send(f"{member.mention} foi silenciado por {time_str} por ordem do imperador Chogoun.")   
+            await message.channel.send(f"{member.mention} foi silenciado por {time_str} por ordem do imperador Chogoun.")  
+
+            if message.content.startswith("!unmute"):
+                if not message.author.guild_permissions.mute_members:
+                    await message.channel.send("Você ousa tentar uma ação além de sua autoridade? Nesse caso ponha-se no seu lugar, e pense se realmente tem o direito de silenciar alguém.")
+                    return
+                if len(message.mentions) == 0:
+                    await message.channel.send("Indique um alvo para remover o silêncio, ou será considerado um ato de insubordinação.")
+                    return
+                
+                member = message.mentions[0]
+
+                await member.timeout(None, reason="Silenciamento removido por ordem do imperador Chogoun.")
+                await message.channel.send(f"O silêncio de {member.mention} foi removido por ordem do imperador Chogoun.")
+
+        if message.content.startswith("!play"):
+                args = message.content.split()
+
+                if len(args) < 2:
+                    await message.channel.send(embed=chogoun_embed(
+                        "⚠️ ATENÇÃO HUMANO",
+                        "Indique uma URL ou termo de pesquisa para reproduzir, ou será considerado um ato de insubordinação."))     
+                    return
+
+                query = " ".join(args[1:])
+
+                if message.author.voice is None or message.author.voice.channel is None:
+                    await message.channel.send(embed=chogoun_embed(
+                        "⚠️ ATENÇÃO HUMANO",
+                        "Você precisa estar em um canal de voz para usar este comando."))
+                    return  
+                
+                channel = message.author.voice.channel
+
+                if message.guild.voice_client is None:
+                    voice_client = await channel.connect()
+                else:
+                    voice_client = message.guild.voice_client
+
+                url = query
+
+                import yt_dlp
+
+                ydl_opts = {
+                    'format': 'bestaudio/best',
+                    'noplaylist': True,
+                    'quiet': True,
+                    'default_search': 'ytsearch',
+                    'no_warnings': True,
+                }
+
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                    audio_url = info['url'] 
+
+                thumbnail = info.get('thumbnail') or "https://i.imgur.com/8Km9tLL.png"
+                
+                source = await discord.FFmpegOpusAudio.from_probe(audio_url)
+
+                if voice_client.is_playing():
+                    voice_client.stop()
+
+                voice_client.play(source)
+
+                await message.channel.send(embed=chogoun_music_embed(
+                    "🌊 O Imperador concedeu som aos mares",
+                    f"**{info['title']}** ecoa pelas profundezas...",
+                    thumbnail
+                ))  
+
+        if message.content.startswith("!stop"):
+            voice_client = message.guild.voice_client
+
+            if voice_client is None:
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "O bot não está conectado a nenhum canal de voz.")) 
+                return
+            
+            await voice_client.disconnect()
+            await message.channel.send(embed=chogoun_embed(
+                "⚠️ ATENÇÃO HUMANO",
+                "Desconectado do canal de voz."
+            ))
+
+        if message.content.startswith("!pause"):
+            voice_client = message.guild.voice_client
+
+            if voice_client is None or not voice_client.is_playing():
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "Você deve estar reproduzindo algo para pausar a reprodução.")
+                )
+                return
+            
+            voice_client.pause()
+            await message.channel.send(embed=chogoun_embed(
+                "Sua ordem será realizada, Mero humano.🌊",
+                "Reprodução pausada."
+            )   )
+
+        if message.content.startswith("!resume"):
+            voice_client = message.guild.voice_client
+
+            if voice_client is None or not voice_client.is_paused():
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "Você deve ter algo pausado para retomar a reprodução."))
+                return 
+            
+            voice_client.resume()
+            await message.channel.send(embed=chogoun_embed(
+                "As ondas do mar estão a seu favor, humano.🌊",
+                "Reprodução retomada."
+            ))
+
+        if message.content.startswith("!skip"):
+            voice_client = message.guild.voice_client
+
+            if voice_client is None or not voice_client.is_playing():
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "Você deve estar repoduzindo algo para pular a música atual."))
+                return
+            
+            voice_client.stop()
+            await message.channel.send(embed=chogoun_embed(
+                "Eu também considerei essa música digna de ser pulada, humano.",
+                "Música pulada."
+            ))
+
 
 intents = discord.Intents.default()
+
 intents.message_content = True
 intents.guilds = True
 intents.members = True  
