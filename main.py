@@ -102,39 +102,63 @@ class Client(discord.Client):
 
         if message.content.startswith("!ban"):
             if not message.author.guild_permissions.ban_members:
-                await message.channel.send("Você ousa tentar uma ação além de sua autoridade? Nesse caso ponha-se no seu lugar, e pense se realmente tem o direito de expulsar alguém.")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo...",
+                    f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                ))
                 return
             if len(message.mentions) == 0:
-                await message.channel.send("Indique um alvo para banir, ou será considerado um ato de insubordinação.")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo..",
+                    "Indique um alvo para banir, ou será considerado um ato de insubordinação."
+                ))
                 return
             
             member = message.mentions[0]
 
             await member.ban(reason="Banido pelo imperador Chogoun, por desrespeito ou comportamento inadequado.")
-            await message.channel.send(f"{member.mention} foi banido por ordem do imperador Chogoun.")
+            await message.channel.send(embed=chogoun_embed(
+                "DESTINO SELADO HUMANO",
+                f"{member.mention} foi banido por ordem do imperador Chogoun."
+            ))
         
         if message.content.startswith("!kick"):
             if not message.author.guild_permissions.kick_members:
-                await message.channel.send("Você ousa tentar uma ação além de sua autoridade? Nesse caso ponha-se no seu lugar, e pense se realmente tem o direito de expulsar alguém.")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo...",
+                    f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                ))
                 return
             if len(message.mentions) == 0:
-                await message.channel.send("Indique um alvo para expulsar, ou será considerado um ato de insubordinação.")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo..",
+                    "Indique um alvo para expulsar, ou será considerado um ato de insubordinação."
+                ))
                 return
             
             member = message.mentions[0]
 
             await member.kick(reason="Expulso por ordem do imperador Chogoun, por desrespeito ou comportamento inadequado.")
-            await message.channel.send(f"{member.mention} foi expulso por ordem do imperador Chogoun.")
+            await message.channel.send(embed=chogoun_embed(
+                "DESTINO SELADO HUMANO",
+                f"{member.mention} foi expulso por ordem do imperador Chogoun."
+            ))
 
         if message.content.startswith("!mute"):
             if not message.author.guild_permissions.mute_members:
-                await message.channel.send("Você ousa tentar uma ação além de sua autoridade? Nesse caso ponha-se no seu lugar, e pense se realmente tem o direito de silenciar alguém.")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo...",
+                    f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                ))
                 return
             
             args = message.content.split()
 
             if len(message.mentions) == 0 or len(args) < 3:
-                await message.channel.send("Indique um alvo e um tempo para silenciar, ou será considerado um ato de insubordinação. O tempo deve ser indicado com um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m")
+                await message.channel.send(embad=chogoun_embed(
+                    "Humano tolo..",
+                    "Indique um alvo e um tempo para silenciar, ou será considerado um ato de insubordinação. O tempo deve ser indicado com um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m"
+                ))
                 return
 
             member = message.mentions[0]
@@ -143,24 +167,39 @@ class Client(discord.Client):
             duration = parse_time(time_str)
 
             if duration is None:
-                await message.channel.send("Tempo inválido. Use um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m")
+                await message.channel.send(embad=chogoun_embed(
+                    "Imprestável humano..",
+                    "Tempo inválido. Use um número seguido de uma letra, onde s = segundos, m = minutos, h = horas e d = dias. Exemplo: !mute @usuário 10m"
+                ))
                 return
 
             await member.timeout(duration, reason="Silenciado por ordem do imperador Chogoun, por desrespeito ou comportamento inadequado.")    
-            await message.channel.send(f"{member.mention} foi silenciado por {time_str} por ordem do imperador Chogoun.")  
+            await message.channel.send(embed=chogoun_embed(
+                "CALADO!! SUA VOZ ME IRRITA HUMANO",
+                f"{member.mention} foi silenciado por {time_str} por ordem do imperador Chogoun."
+            ))
 
-            if message.content.startswith("!unmute"):
+        if message.content.startswith("!unmute"):
                 if not message.author.guild_permissions.mute_members:
-                    await message.channel.send("Você ousa tentar uma ação além de sua autoridade? Nesse caso ponha-se no seu lugar, e pense se realmente tem o direito de silenciar alguém.")
+                    await message.channel.send(embad=chogoun_embed(
+                        "Humano tolo...",
+                        f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                    ))
                     return
                 if len(message.mentions) == 0:
-                    await message.channel.send("Indique um alvo para remover o silêncio, ou será considerado um ato de insubordinação.")
+                    await message.channel.send(embad=chogoun_embed(
+                        "Imprestável humano..",
+                        "Indique um alvo para remover o silêncio, ou será considerado um ato de insubordinação."
+                    ))
                     return
                 
                 member = message.mentions[0]
 
                 await member.timeout(None, reason="Silenciamento removido por ordem do imperador Chogoun.")
-                await message.channel.send(f"O silêncio de {member.mention} foi removido por ordem do imperador Chogoun.")
+                await message.channel.send(embed=chogoun_embed(
+                    "PODE FALAR AGORA, MAS CUIDADO COM O QUE VAI DIZER HUMANO",
+                    f"O silêncio de {member.mention} foi removido por ordem do imperador Chogoun."
+                ))
 
         if message.content.startswith("!play"):
                 args = message.content.split()
@@ -277,6 +316,15 @@ class Client(discord.Client):
                 "Eu também considerei essa música digna de ser pulada, humano.",
                 "Música pulada."
             ))
+
+        async def on_guild_join(self, guild):
+            general = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
+            if general and general.permissions_for(guild.me).send_messages:
+                await general.send(embed=chogoun_embed(
+                    "Saudações, súditos do reino de [NOME DO SERVIDOR]!",
+                    "Eu sou Chogoun, o imperador e divindade dos mares, e estou aqui para governar e proteger este servidor com minha sabedoria e poder. Preparem-se para uma era de prosperidade e ordem sob meu comando supremo! 🌊👑"
+                ))  
+        
 
 
 intents = discord.Intents.default()
