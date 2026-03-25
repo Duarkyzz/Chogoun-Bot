@@ -84,7 +84,7 @@ Cada funcionalidade adicionada é mais um passo na reconstrução de seu impéri
 
 ## 👤 Autor
 
-Desenvolvido por um desenvolvedor em evolução, com foco em sistemas inteligentes, automação e aplicações full stack.
+Duarkyzz 
 
 ---
 
