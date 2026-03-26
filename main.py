@@ -132,13 +132,6 @@ class Client(discord.Client):
                 descricao=response.choices[0].message.content.strip()
            )
             await message.channel.send(embed=embed)
-        
-            if len(message.content.split()) == 1:
-              await message.channel.send(embed=chogoun_embed(
-            "⚠️ ATENÇÃO HUMANO",
-            "Faça uma pergunta após o comando."
-        ))
-              return
 
         if message.content.startswith("!ban"):
             if not message.author.guild_permissions.ban_members:
@@ -390,11 +383,121 @@ class Client(discord.Client):
                 inline=False
             )
 
+            embed.add_field(
+                name="👑 Administração de Cargos",
+                value="`!addrole @usuário Cargo`\n`!removerole @usuário Cargo`",
+                inline=False
+            )
+
             await message.channel.send(embed=embed)
-
-
         
+        if message.content.startswith("!addrole"):
+            if not message.author.guild_permissions.manage_roles:
+                await message.channel.send(embed=chogoun_embed(
+                    "Humano tolo...",
+                    f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                ))
+                return
+            
+            args = message.content.split()
 
+            if len(message.mentions) == 0 or len(args) < 3:
+                await message.channel.send(embed=chogoun_embed(
+                    "Humano tolo..",
+                    "Indique um alvo e o nome do cargo a ser adicionado.\nExemplo: `!addrole @usuário Cargo`"
+                ))
+                return
+
+            member = message.mentions[0]
+            role_name = " ".join(args[2:])
+            role = discord.utils.get(message.guild.roles, name=role_name)
+
+            if role is None:
+                await message.channel.send(embed=chogoun_embed(
+                    "Imprestável humano..",
+                    f"O cargo **{role_name}** não existe."
+                ))
+                return
+
+            if role in member.roles:
+                await message.channel.send(embed=chogoun_embed(
+                    "Inútil tentativa...",
+                    f"{member.mention} já possui o cargo **{role.name}**."
+                ))
+                return
+
+            if role >= message.guild.me.top_role:
+                await message.channel.send(embed=chogoun_embed(
+                    "Poder insuficiente...",
+                    f"Não posso gerenciar o cargo **{role.name}** pois ele está acima de mim."
+                ))
+                return
+
+            try:
+                await member.add_roles(role, reason="Cargo adicionado por ordem do imperador Chogoun.")
+                await message.channel.send(embed=chogoun_embed(
+                    "Cargo concedido por ordem do Imperador dos Mares 🌊",
+                    f"O cargo **{role.name}** foi adicionado a {member.mention}."
+                ))
+            except Exception as e:
+                await message.channel.send(embed=chogoun_embed(
+                    "Falha imperial...",
+                    f"Não foi possível adicionar o cargo.\n`{e}`"
+                ))
+
+        if message.content.startswith("!removerole"):
+            if not message.author.guild_permissions.manage_roles:
+                await message.channel.send(embed=chogoun_embed(
+                    "Humano tolo...",
+                    f"**{message.author.mention}**, ponha-se no seu lugar, verme maldito."
+                ))
+                return
+            
+            args = message.content.split()
+
+            if len(message.mentions) == 0 or len(args) < 3:
+                await message.channel.send(embed=chogoun_embed(
+                    "Humano tolo..",
+                    "Indique um alvo e o nome do cargo a ser removido.\nExemplo: `!removerole @usuário Cargo`"
+                ))
+                return
+
+            member = message.mentions[0]
+            role_name = " ".join(args[2:])
+            role = discord.utils.get(message.guild.roles, name=role_name)
+
+            if role is None:
+                await message.channel.send(embed=chogoun_embed(
+                    "Imprestável humano..",
+                    f"O cargo **{role_name}** não existe."
+                ))
+                return
+
+            if role not in member.roles:
+                await message.channel.send(embed=chogoun_embed(
+                    "Tentativa inútil...",
+                    f"{member.mention} não possui o cargo **{role.name}**."
+                ))
+                return
+
+            if role >= message.guild.me.top_role:
+                await message.channel.send(embed=chogoun_embed(
+                    "Poder insuficiente...",
+                    f"Não posso gerenciar o cargo **{role.name}** pois ele está acima de mim."
+                ))
+                return
+
+            try:
+                await member.remove_roles(role, reason="Cargo removido por ordem do imperador Chogoun.")
+                await message.channel.send(embed=chogoun_embed(
+                    "Cargo removido por ordem do Imperador dos Mares 🌊",
+                    f"O cargo **{role.name}** foi removido de {member.mention}."
+                ))
+            except Exception as e:
+                await message.channel.send(embed=chogoun_embed(
+                    "Falha imperial...",
+                    f"Não foi possível remover o cargo.\n`{e}`"
+                ))
 
 intents = discord.Intents.default()
 
