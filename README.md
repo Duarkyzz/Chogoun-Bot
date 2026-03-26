@@ -1,5 +1,8 @@
 # 🌊 Chogoun Bot — O Imperador dos Sete Mares
-Versão 1.0a
+
+Versão 1.5b
+
+(⚠️BOT ESTARÁ INDISPONIVEL DIA 26 ATE AS 00:00 POR MOTIVOS DE MANUTENÇÃO⚠️)
 
 ## 📜 Sobre
 
