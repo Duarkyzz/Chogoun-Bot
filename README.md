@@ -22,6 +22,8 @@ Mesmo ao auxiliar usuários, Chogoun mantém sua postura superior, tratando todo
 
 ---
 
+### (Temos o comando !help, mas caso tenha duvida)
+
 ## ⚙️ Funcionalidades Atuais
 
 ### 🤖 Inteligência Artificial
@@ -43,6 +45,11 @@ Comandos administrativos disponíveis:
 - `!skip` — Pula a música atual
 - `!stop` — Para a música
 - `!resume` — Continua a música se estiver pausado
+
+### 🧩 Comandos para gerenciar cargos:
+
+- `!addrole` Adiciona cargo para o usuário
+- `!removerole` Remove o cargo do usuário
 
 ---
 
