@@ -65,7 +65,7 @@ def chogoun_embed(titulo, descricao):
         title=titulo,
         description=descricao,
         color=0x48FF68
-    )
+    ) 
     embed.set_footer(text="Chogoun • Imperador dos Mares 🌊")
     return embed
 
@@ -364,6 +364,34 @@ class Client(discord.Client):
                 "Eu também considerei essa música digna de ser pulada, humano.",
                 "Música pulada."
             ))
+        
+        if message.content.startswith("!help"):
+
+            embed = chogoun_embed(
+                "📜 Comandos do Imperador dos Mares",
+                "Eis as ordens permitidas."
+            )
+
+            embed.add_field(
+                name= "⚔️ Moderação",
+                value= "`!ban @usuário`\n`!kick @usuário`\n`!mute @usuário 10m`\n`!unmute @usuário`",
+                inline=False
+            )
+
+            embed.add_field(
+                name= "🎵 Música",
+                value= "`!play [URL ou termo de pesquisa]`\n`!stop`\n`!pause`\n`!resume`\n`!skip`",
+                inline=False
+            )
+
+            embed.add_field(
+                name="🧠 Inteligência",
+                value="`!question [sua pergunta]`",
+                inline=False
+            )
+
+            await message.channel.send(embed=embed)
+
 
         
 
