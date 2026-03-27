@@ -527,7 +527,7 @@ class Client(discord.Client):
 
             embed.add_field(
                 name="🎮 Uno",
-                value="`!uno start`\n`!uno join`\n`!uno deal`",
+                value="`!uno start`\n`!uno join`\n`!uno deal`\n`!uno play [Carta]`",
                 inline=False
             )
 
