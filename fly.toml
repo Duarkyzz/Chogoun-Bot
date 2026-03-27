@@ -1,0 +1,19 @@
+# fly.toml app configuration file generated for chogoun-bot on 2026-03-27T00:24:07-03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "chogoun-bot"
+primary_region = "gru"
+
+[build]
+
+[env]
+
+[processes]
+  app = "python main.py"
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
