@@ -10,10 +10,14 @@ primary_region = "gru"
 
 [env]
 
-[processes]
-  app = "python main.py"
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
 
-[[vm]]
+[vm]
   memory = "1gb"
   cpu_kind = "shared"
   cpus = 1

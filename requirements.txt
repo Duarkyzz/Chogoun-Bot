@@ -1,5 +1,5 @@
-discord.py
+discord.py[voice]
+PyNaCl
+yt-dlp
 groq
 python-dotenv
-yt-dlp
-PyNaCl
