@@ -668,7 +668,7 @@ class Client(discord.Client):
 
             await message.channel.send(embed=chogoun_embed(
                 "🏔️ Uno invocado pelo Imperador! Estou bastante empolgado!"
-                "Quem deseja jogar comigo? Digite `!uno join` para participar. (Máx 10 jogadores)"
+                "Estou bastante empolgado!\nQuem deseja jogar comigo? Digite `!uno join` para participar. (Máx 10 jogadores)"
 
             ))
 
@@ -692,6 +692,14 @@ class Client(discord.Client):
                 "O limite de jogadores foi atingido humano..."
                 "Apenas 10 jogadores podem participar do jogo.(eu sei uno é muito bom e sinto muito por isso)"
             ))
+                return
+            
+            if message.author.id in game["players"]:
+                await message.channel.send(embed=chogoun_embed(
+                    "Você já está no jogo humano..."
+                    f"{message.author.mention}, aguarde o início do jogo ou convide outros jogadores para se juntarem usando `!uno join`."      
+                ))
+                return
         
             game["players"].append(message.author.id)   
             await message.channel.send(embed=chogoun_embed(
@@ -732,7 +740,7 @@ class Client(discord.Client):
             
             for player_id in game["players"]:
                 hand = [game["deck"].pop() for _ in range(7)]
-                user = await self.fetch_user(player_id)
+                user = await client.fetch_user(player_id)
                 try:
                     await user.send(embed=chogoun_embed(
                         "Suas cartas foram distribuídas pelo Imperador das Montanhas! 🏔️",
@@ -747,6 +755,56 @@ class Client(discord.Client):
                 f"{len(game['players'])} jogadores estão prontos para jogar."
             ))
             return
+        
+        # =========================
+        # !UNO DEAL
+        # =========================
+
+        if message.content.startswith("!uno deal"):
+            game = uno_games.get(message.guild.id)
+            if not game:
+                await message.channel.send(embed=chogoun_embed(
+                    "Nenhum jogo foi iniciado humano...",
+                    "Use `!uno start` para iniciar um novo jogo."
+                ))
+                return
+            
+            if len(game["players"]) < 2:
+                await message.channel.send(embed=chogoun_embed(
+                    "Não há jogadores suficientes humano...",
+                    "Espere mais jogadores se juntarem usando `!uno join`."
+                ))
+                return
+            
+            if game["started"]:
+                await message.channel.send(embed=chogoun_embed(
+                    "O jogo já começou humano...",
+                    "Não pode distribuir cartas novamente."
+                ))
+                return
+            
+            game["deck"] = create_deck()
+            game["discard_pile"] = []
+            
+            for player_id in game["players"]:
+                hand = [game["deck"].pop() for _ in range(7)]
+                user = await client.fetch_user(player_id)
+                try:
+                    await user.send(embed=chogoun_embed(
+                        "Suas cartas foram distribuídas pelo Imperador das Montanhas! 🏔️",
+                        f"Sua mão: {', '.join(hand)}"
+                    ))
+                except Exception as e:
+                    print(f"ERRO AO ENVIAR CARTAS PARA {user}: {e}")
+            
+            game["started"] = True
+            await message.channel.send(embed=chogoun_embed(
+                "Cartas distribuídas! O jogo de Uno do Imperador das Montanhas começou! 🏔️",
+                f"{len(game['players'])} jogadores estão prontos para jogar."
+            ))
+            return
+
+
 
 intents = discord.Intents.default()
 intents.message_content = True
