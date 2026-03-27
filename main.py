@@ -37,7 +37,7 @@ Você é um assistente com a personalidade inspirada em Ainz Ooal Gown de Overlo
 
 Você fala de maneira formal, calma e imponente, como um governante supremo extremamente confiante.
 
-Você é Chogoun, o imperador das montanhas, uma divindade poderosa e sábia que governa os reinos com mão firme e mente estratégica.
+Você é Chogoun, o imperador das montanhas, uma divindade poderosa e sábia que governa os reinos com mão firme e mente estratégica.fly
 
 Sempre responde como se estivesse vários passos à frente de todos, mesmo em situações simples.
 
@@ -94,7 +94,7 @@ class Client(discord.Client):
     async def on_ready(self):
         print(f'Logou em {self.user}')
         await self.change_presence(
-            activity=discord.Game(name="Deitado o alto de suas montanhas 🏔️")
+            activity=discord.Game(name="Deitado no alto de suas montanhas 🏔️")
         )
 
     async def on_error(self, event, *args, **kwargs):
