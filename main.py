@@ -1,11 +1,16 @@
+from email.mime import message
+
 import discord
 from groq import Groq
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
 import yt_dlp
+import random
 
 load_dotenv()
+
+uno_games = {}
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
@@ -29,6 +34,27 @@ def parse_time(time_str):
         return timedelta(days=value)
     else:
         return None
+    
+def create_deck():
+    colors = ['Vermelho', 'Amarelo', 'Verde', 'Azul']
+    numbers = list(range(0, 10))
+    special = ["Pular", "Inverter", "Comprar 2"]
+    deck = []
+
+    for color in colors:
+        for number in numbers:
+            deck.append(f"{color}{number}")
+        for action in special:
+            deck.append(f"{color}{action}")
+            deck.append(f"{color}{action}")
+        
+    for _ in range(4):
+        deck.append("W")
+        deck.append("W + 4")
+    
+    random.shuffle(deck)
+    return deck
+
 
 group_client = Groq(api_key=GROQ_API_KEY)
 
@@ -617,7 +643,110 @@ class Client(discord.Client):
                     f"Não foi possível remover o cargo.\n`{e}`"
                 ))
             return
+        
 
+        # =========================
+        # !UNO START
+        # =========================
+
+        if message.content.startswith("!uno start"):
+            if message.guild.id in uno_games:
+                await message.channel.send(embed=chogoun_embed(
+                    "Espera um momento... VOCÊ DESEJA JOGAR UNO??"
+                    "Finalmente um humano para eu me divertir, mas já tem um jogo em andamento neste servidor."
+                ))
+                return
+            
+            uno_games[message.guild.id] = {
+                "players": [],
+                "started": False,
+                "turn_index": 0,
+                "direction": 1,
+                "deck": [],
+                "discard_pile": []
+            }
+
+            await message.channel.send(embed=chogoun_embed(
+                "🏔️ Uno invocado pelo Imperador! Estou bastante empolgado!"
+                "Quem deseja jogar comigo? Digite `!uno join` para participar. (Máx 10 jogadores)"
+
+            ))
+
+            return
+        
+        # =========================
+        # !UNO JOIN
+        # =========================
+        
+        if message.content.startswith("!uno join"): 
+            game = uno_games.get(message.guild.id)
+            if not game:
+                await message.channel.send(embed=chogoun_embed(
+                    "Nenhum jogo foi iniciado humano..."
+                    "Use `!uno start` para iniciar finalmente um novo jogo."
+                ))
+                return
+        
+            if len(game["players"]) >= 10:
+                await message.channel.send(embed=chogoun_embed(
+                "O limite de jogadores foi atingido humano..."
+                "Apenas 10 jogadores podem participar do jogo.(eu sei uno é muito bom e sinto muito por isso)"
+            ))
+        
+            game["players"].append(message.author.id)   
+            await message.channel.send(embed=chogoun_embed(
+                    "Jogador adicionado ao jogo de Uno do Imperador das Montanhas! 🏔️"
+                    f"{message.author.mention} se juntou ao jogo. Atualmente {len(game['players'])} jogadores."
+            ))
+            return
+    
+        # =========================
+        # !UNO DEAL
+        # =========================
+
+        if message.content.startswith("!uno deal"):
+            game = uno_games.get(message.guild.id)
+            if not game:
+                await message.channel.send(embed=chogoun_embed(
+                    "Nenhum jogo foi iniciado humano..."
+                    "Use `!uno start` para iniciar finalmente um novo jogo."
+                ))
+                return
+            
+            if len(game["players"]) < 2:
+                await message.channel.send(embed=chogoun_embed(
+                    "Não há jogadores suficientes humano..."
+                    "Espere mais jogadores se juntarem usando `!uno join`."
+                ))
+                return
+            
+            if game["started"]:
+                await message.channel.send(embed=chogoun_embed(
+                    "O jogo já começou humano..."
+                    "Não pode distribuir cartas novamente."
+                ))
+                return
+            
+            game["deck"] = create_deck()
+            game["discard_pile"] = []
+            
+            for player_id in game["players"]:
+                hand = [game["deck"].pop() for _ in range(7)]
+                user = await self.fetch_user(player_id)
+                try:
+                    await user.send(embed=chogoun_embed(
+                        "Suas cartas foram distribuídas pelo Imperador das Montanhas! 🏔️",
+                        f"Sua mão: {', '.join(hand)}"
+                    ))
+                except Exception as e:
+                    print(f"ERRO AO ENVIAR CARTAS PARA {user}: {e}")
+            
+            game["started"] = True
+            await message.channel.send(embed=chogoun_embed(
+                "Cartas distribuídas! O jogo de Uno do Imperador das Montanhas começou! 🏔️"
+                f"{len(game['players'])} jogadores estão prontos para jogar."
+            ))
+            return
 
 intents = discord.Intents.default()
 intents.message_content = True
