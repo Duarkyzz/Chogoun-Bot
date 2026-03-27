@@ -110,6 +110,15 @@ Ferramentas para controle básico de cargos dentro do servidor.
 - `!addrole` — Adiciona um cargo a um usuário
 - `!removerole` — Remove um cargo de um usuário
 
+### 🃏 UNO caso queira algo mais descontraído
+
+- `!uno start ` — Ele inicia uma partida
+- `!uno join` — Você entra na partida criada ou ja existente
+- `!uno deal` — Começa a partida com os jogadores que deram `!join`
+- `!uno play (carta)` — Faz com que você jogue a carta que recebeu
+
+  Lembrando que as cartas são mandadas pelo proprio Chogoun no privado do usuário
+
 ---
 
 ## 🚧 Expansão do Império
@@ -123,6 +132,8 @@ Cada atualização representa mais do que uma melhoria técnica — representa *
 - 🎫 Sistema de tickets e suporte
 - 📊 Dashboard web para controle do bot
 - 🔐 Ferramentas mais robustas de administração e automação
+
+###⚠ ESSAS ATUALIZAÇÕES FUTURAS JÁ IRAM CHEGAR NA PROXIMA ATUALIZAÇÃO, FIQUE DE OLHO EM!⚠
 
 > **O império ainda está sendo erguido.**
 
