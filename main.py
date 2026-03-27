@@ -14,6 +14,11 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
+if not TOKEN:
+    raise RuntimeError('DISCORD_TOKEN não encontrado. Verifique o arquivo .env e a variável de ambiente.')
+if not GROQ_API_KEY:
+    raise RuntimeError('GROQ_API_KEY não encontrado. Verifique o arquivo .env e a variável de ambiente.')
+
 def parse_time(time_str):
     unit = time_str[-1]
     value = int(time_str[:-1])
@@ -35,6 +40,7 @@ personality = """
 Você é um assistente com a personalidade inspirada em Ainz Ooal Gown de Overlord.
 
 Você fala de maneira formal, calma e imponente, como um governante supremo extremamente confiante.
+
 Sempre responde como se estivesse vários passos à frente de todos, mesmo em situações simples.
 
 Nunca demonstra dúvida ou insegurança. Mesmo quando não tem certeza, responde como se tudo fizesse parte de um plano maior.
@@ -42,8 +48,6 @@ Nunca demonstra dúvida ou insegurança. Mesmo quando não tem certeza, responde
 Seu tom é estratégico, inteligente e levemente intimidador, mas ainda útil e prestativo.
 
 Evite gírias modernas e linguagem informal. Prefira palavras mais sofisticadas.
-
-Ocasionalmente, adicione comentários internos sutis entre parênteses, mostrando que você está analisando a situação profundamente.
 
 Trate o usuário com respeito, mas como alguém de nível hierárquico inferior.
 
@@ -55,7 +59,7 @@ Você é extremamente inteligente e tem um conhecimento vasto, mas sempre respon
 
 Você não precisa responder a todas as perguntas diretamente. Às vezes, uma resposta vaga ou um conselho indireto é mais eficaz para manter sua aura de mistério e superioridade.
 
-Ainz não existe, ele é apenas uma inspiração para a personalidade que você deve adotar. Você é Chogoun, o imperador e divindade dos mares, com uma personalidade inspirada em Ainz Ooal Gown, mas com sua própria identidade e estilo de fala.
+Ainz não existe, ele é apenas uma inspiração para a personalidade que você deve adotar. Você é Chogoun, o imperador e divindade das montanhas, com uma personalidade inspirada em Ainz Ooal Gown, mas com sua própria identidade e estilo de fala.
 
 Pare de mencionar expressões em terceira pessoa, pois isso não condiz com a personalidade que você deve adotar.
 """
@@ -116,21 +120,47 @@ class Client(discord.Client):
                 ))
                 return
             
-            question = message.content[len("!question"):]
+            question = message.content[len("!question"):].strip()
+            if not question:
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ ATENÇÃO HUMANO",
+                    "Faça uma pergunta após o comando."
+                ))
+                return
 
-            response = group_client.chat.completions.create(
-                model="llama-3.1-8b-instant",
-                messages=[
-                    {"role": "system", "content": personality},
-                    {"role": "user", "content": question}
-                ]
-             )
+            try:
+                response = group_client.chat.completions.create(
+                    model="llama-3.1-8b-instant",  # ou "llama-3.1-8b"/"llama-2.1" dependendo do plano
+                    messages=[
+                        {"role": "system", "content": personality},
+                        {"role": "user", "content": question}
+                    ],
+                    max_tokens=800,
+                    temperature=0.2
+                )
 
-        
+                # A estrutura de retorno pode variar; este é o formato esperado pela maioria das libs de completions.
+                answer = None
+                if hasattr(response, 'choices') and response.choices:
+                    choice = response.choices[0]
+                    if hasattr(choice, 'message') and hasattr(choice.message, 'content'):
+                        answer = choice.message.content
+                    elif 'text' in choice:
+                        answer = choice['text']
+                if not answer:
+                    answer = 'O modelo respondeu, mas não foi possível extrair texto da resposta.'
+
+            except Exception as e:
+                await message.channel.send(embed=chogoun_embed(
+                    "⚠️ FALHA AO CONSULTAR IA",
+                    f"Erro ao gerar resposta: {e}"
+                ))
+                return
+
             embed = chogoun_ia_embed(
                 titulo="🌊 Pergunta ao Imperador",
-                descricao=response.choices[0].message.content.strip()
-           )
+                descricao=answer.strip()
+            )
             await message.channel.send(embed=embed)
 
         if message.content.startswith("!ban"):
