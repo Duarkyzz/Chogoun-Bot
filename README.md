@@ -110,12 +110,22 @@ Ferramentas para controle básico de cargos dentro do servidor.
 - `!addrole` — Adiciona um cargo a um usuário
 - `!removerole` — Remove um cargo de um usuário
 
+**Exemplo:**
+```
+!addorole @cargo @nomedeusuário
+```
+
 ### 🃏 UNO caso queira algo mais descontraído
 
 - `!uno start ` — Ele inicia uma partida
 - `!uno join` — Você entra na partida criada ou ja existente
 - `!uno deal` — Começa a partida com os jogadores que deram `!join`
 - `!uno play (carta)` — Faz com que você jogue a carta que recebeu
+
+**Exemplo:**
+```
+!uno play Amarelo7
+```
 
   Lembrando que as cartas são mandadas pelo proprio Chogoun no privado do usuário
 
