@@ -98,8 +98,10 @@ class Client(discord.Client):
        print(f'Logou em {self.user}')
        await self.change_presence(
            activity=discord.Game(name="Governando os sete mares 🌊")
-    )
-        
+       )
+
+    async def on_error(self, event, *args, **kwargs):
+       print(f"Erro no evento {event}")
     async def on_guild_join(self, guild):
         general = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
 
@@ -536,5 +538,13 @@ intents.guilds = True
 intents.members = True  
 
 client = Client(intents=intents)
+
+print("TOKEN carregado:", bool(TOKEN))
+print("GROQ carregado:", bool(GROQ_API_KEY))
+
 keep_alive()
-client.run(TOKEN)
+
+try:
+    client.run(TOKEN)
+except Exception as e:
+    print("ERRO AO INICIAR O BOT:", e)
