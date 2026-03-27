@@ -1,5 +1,8 @@
 # 🌊 Chogoun Bot — O Imperador dos Sete Mares
-Versão 1.0a
+
+Versão 1.5b
+
+(⚠️BOT ESTARÁ INDISPONIVEL DIA 26 ATE AS 00:00 POR MOTIVOS DE MANUTENÇÃO⚠️)
 
 ## 📜 Sobre
 
@@ -22,6 +25,8 @@ Mesmo ao auxiliar usuários, Chogoun mantém sua postura superior, tratando todo
 
 ---
 
+### (Temos o comando !help, mas caso tenha duvida)
+
 ## ⚙️ Funcionalidades Atuais
 
 ### 🤖 Inteligência Artificial
@@ -43,6 +48,11 @@ Comandos administrativos disponíveis:
 - `!skip` — Pula a música atual
 - `!stop` — Para a música
 - `!resume` — Continua a música se estiver pausado
+
+### 🧩 Comandos para gerenciar cargos:
+
+- `!addrole` Adiciona cargo para o usuário
+- `!removerole` Remove o cargo do usuário
 
 ---
 
