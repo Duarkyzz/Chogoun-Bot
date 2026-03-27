@@ -55,6 +55,20 @@ def create_deck():
     random.shuffle(deck)
     return deck
 
+def can_play(card, top_card):
+    if card.startswith("W"):
+        return True
+    if card[:-len('Pular')] == top_card[:-len('Pular')]:
+        return True
+    if card[:-len('Inverter')] == top_card[:-len('Inverter')]:
+        return True
+    if card[:-len('Comprar 2')] == top_card[:-len('Comprar 2')]:
+        return True
+    if card[-1].isdigit() and top_card[-1].isdigit() and card[-1] == top_card[-1]:
+        return True
+    if card[:-1] == top_card[:-1]:
+        return True
+    return False
 
 group_client = Groq(api_key=GROQ_API_KEY)
 
@@ -87,231 +101,130 @@ Ainz não existe, ele é apenas uma inspiração para a personalidade que você 
 """
 
 def chogoun_embed(titulo, descricao):
-    embed = discord.Embed(
-        title=titulo,
-        description=descricao,
-        color=0x8B8B8B
-    )
+    embed = discord.Embed(title=titulo, description=descricao, color=0x8B8B8B)
     embed.set_footer(text="Chogoun • Imperador das Montanhas 🏔️")
     return embed
 
 def chogoun_music_embed(titulo, descricao, thumbnail_url):
-    embed = discord.Embed(
-        title=titulo,
-        description=descricao,
-        color=0x8B8B8B
-    )
+    embed = discord.Embed(title=titulo, description=descricao, color=0x8B8B8B)
     if thumbnail_url:
         embed.set_thumbnail(url=thumbnail_url)
     embed.set_footer(text="Chogoun • Imperador das Montanhas 🏔️")
     return embed
 
 def chogoun_ia_embed(titulo, descricao):
-    embed = discord.Embed(
-        title=titulo,
-        description=descricao,
-        color=0x8B8B8B
-    )
+    embed = discord.Embed(title=titulo, description=descricao, color=0x8B8B8B)
     embed.set_footer(text="Resposta gerada por Chogoun, o imperador e divindade das montanhas 🏔️")
     return embed
 
 class Client(discord.Client):
     async def on_ready(self):
         print(f'Logou em {self.user}')
-        await self.change_presence(
-            activity=discord.Game(name="Deitado no alto de suas montanhas 🏔️")
-        )
+        await self.change_presence(activity=discord.Game(name="Deitado no alto de suas montanhas 🏔️"))
 
     async def on_error(self, event, *args, **kwargs):
         print(f"Erro no evento {event}")
 
     async def on_guild_join(self, guild):
         general = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
-
         if general and general.permissions_for(guild.me).send_messages:
-            await general.send(embed=chogoun_embed(
-                "Saudações, súditos do reino!",
-                "Eu sou Chogoun, o imperador das montanhas 🏔️"
-            ))
+            await general.send(embed=chogoun_embed("Saudações, súditos do reino!", "Eu sou Chogoun, o imperador das montanhas 🏔️"))
 
     async def on_message(self, message):
         if message.author == self.user:
             return
 
-        # =========================
-        # !QUESTION
-        # =========================
-        if message.content.startswith("!question"):
-            if len(message.content.split()) == 1:
-                await message.channel.send(embed=chogoun_embed(
-                    "⚠️ ATENÇÃO HUMANO",
-                    "Faça uma pergunta após o comando."
-                ))
-                return
-
-            question = message.content[len("!question"):].strip()
-            if not question:
-                await message.channel.send(embed=chogoun_embed(
-                    "⚠️ ATENÇÃO HUMANO",
-                    "Faça uma pergunta após o comando."
-                ))
-                return
-
-            try:
-                response = group_client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[
-                        {"role": "system", "content": personality},
-                        {"role": "user", "content": question}
-                    ],
-                    max_tokens=800,
-                    temperature=0.2
-                )
-
-                answer = None
-                if hasattr(response, 'choices') and response.choices:
-                    choice = response.choices[0]
-                    if hasattr(choice, 'message') and hasattr(choice.message, 'content'):
-                        answer = choice.message.content
-                    elif 'text' in choice:
-                        answer = choice['text']
-
-                if not answer:
-                    answer = 'O modelo respondeu, mas não foi possível extrair texto da resposta.'
-
-            except Exception as e:
-                await message.channel.send(embed=chogoun_embed(
-                    "⚠️ FALHA AO CONSULTAR IA",
-                    f"Erro ao gerar resposta: {e}"
-                ))
-                return
-
-            embed = chogoun_ia_embed(
-                titulo="🏔️ Pergunta ao Imperador",
-                descricao=answer.strip()
-            )
-            await message.channel.send(embed=embed)
-            return
-
-        # =========================
-        # TODO: Comandos de moderação e música permanecem como no seu código original...
-        # =========================
-
-        # =========================
-        # !UNO START
-        # =========================
+        # === UNO START ===
         if message.content.startswith("!uno start"):
             if message.guild.id in uno_games:
-                await message.channel.send(embed=chogoun_embed(
-                    "Espera um momento... VOCÊ DESEJA JOGAR UNO??",
-                    "Já existe um jogo em andamento neste servidor."
-                ))
+                await message.channel.send(embed=chogoun_embed("Jogo já iniciado!", "Já existe um jogo em andamento."))
                 return
-            
-            uno_games[message.guild.id] = {
-                "players": [],
-                "started": False,
-                "turn_index": 0,
-                "direction": 1,
-                "deck": [],
-                "discard_pile": [],
-                "hands": {}
-            }
-
-            await message.channel.send(embed=chogoun_embed(
-                "🏔️ Uno invocado pelo Imperador!",
-                "Digite `!uno join` para participar. (Máx 10 jogadores)"
-            ))
+            uno_games[message.guild.id] = {"players": [], "started": False, "turn_index": 0, "direction": 1, "deck": [], "discard_pile": [], "hands": {}}
+            await message.channel.send(embed=chogoun_embed("🏔️ Uno invocado!", "Digite `!uno join` para participar."))
             return
 
-        # =========================
-        # !UNO JOIN
-        # =========================
+        # === UNO JOIN ===
         if message.content.startswith("!uno join"):
             game = uno_games.get(message.guild.id)
             if not game:
-                await message.channel.send(embed=chogoun_embed(
-                    "Nenhum jogo foi iniciado humano...",
-                    "Use `!uno start` para iniciar um novo jogo."
-                ))
+                await message.channel.send(embed=chogoun_embed("Nenhum jogo iniciado.", "Use `!uno start`."))
                 return
-
             if len(game["players"]) >= 10:
-                await message.channel.send(embed=chogoun_embed(
-                    "O limite de jogadores foi atingido humano...",
-                    "Apenas 10 jogadores podem participar do jogo."
-                ))
+                await message.channel.send(embed=chogoun_embed("Limite atingido.", "Máx 10 jogadores."))
                 return
-            
             if message.author.id in game["players"]:
-                await message.channel.send(embed=chogoun_embed(
-                    "Você já está no jogo humano...",
-                    f"{message.author.mention}, aguarde o início do jogo."
-                ))
+                await message.channel.send(embed=chogoun_embed("Você já entrou.", "Aguarde o início do jogo."))
                 return
-            
             game["players"].append(message.author.id)
-            await message.channel.send(embed=chogoun_embed(
-                "Jogador adicionado!",
-                f"{message.author.mention} se juntou ao jogo. {len(game['players'])} jogadores no total."
-            ))
+            await message.channel.send(embed=chogoun_embed("Jogador adicionado!", f"{message.author.mention} entrou. Total: {len(game['players'])}"))
             return
 
-        # =========================
-        # !UNO DEAL (início do jogo)
-        # =========================
+        # === UNO DEAL ===
         if message.content.startswith("!uno deal"):
             game = uno_games.get(message.guild.id)
-            if not game:
-                await message.channel.send(embed=chogoun_embed(
-                    "Nenhum jogo iniciado...",
-                    "Use `!uno start` para iniciar."
-                ))
+            if not game or len(game["players"]) < 2:
+                await message.channel.send(embed=chogoun_embed("Jogadores insuficientes.", "Aguarde mais jogadores."))
                 return
-
-            if len(game["players"]) < 2:
-                await message.channel.send(embed=chogoun_embed(
-                    "Não há jogadores suficientes...",
-                    "Espere mais jogadores se juntarem com `!uno join`."
-                ))
-                return
-
             if game["started"]:
-                await message.channel.send(embed=chogoun_embed(
-                    "O jogo já começou...",
-                    "Não pode distribuir cartas novamente."
-                ))
+                await message.channel.send(embed=chogoun_embed("Jogo já começou.", "Não pode distribuir cartas novamente."))
                 return
-
             game["deck"] = create_deck()
-            game["discard_pile"] = []
-            game["hands"] = {}
-
             for player_id in game["players"]:
                 hand = [game["deck"].pop() for _ in range(7)]
                 game["hands"][player_id] = hand
                 user = await self.fetch_user(player_id)
                 try:
-                    await user.send(embed=chogoun_embed(
-                        "Suas cartas foram distribuídas!",
-                        f"Sua mão: {', '.join(hand)}"
-                    ))
-                except:
-                    pass
-
+                    await user.send(embed=chogoun_embed("Suas cartas! 🏔️", f"Mão: {', '.join(hand)}"))
+                except Exception as e:
+                    print(f"Erro enviar cartas {user}: {e}")
             game["started"] = True
             first_card = game["deck"].pop()
             game["discard_pile"].append(first_card)
-
-            await message.channel.send(embed=chogoun_embed(
-                "Cartas distribuídas! O jogo começou!",
-                f"O primeiro card da pilha: **{first_card}**"
-            ))
+            await message.channel.send(embed=chogoun_embed("Cartas distribuídas!", f"Topo da pilha: {first_card}"))
             return
 
-# =========================
-# INICIALIZAÇÃO
-# =========================
+        # === UNO PLAY ===
+        if message.content.startswith("!uno play"):
+            game = uno_games.get(message.guild.id)
+            if not game or not game["started"]:
+                await message.channel.send(embed=chogoun_embed("Nenhum jogo em andamento.", "Use `!uno start` e `!uno deal`."))
+                return
+            player_id = message.author.id
+            if game["players"][game["turn_index"]] != player_id:
+                await message.channel.send(embed=chogoun_embed("Não é sua vez.", "Aguarde a vez."))
+                return
+            args = message.content.split()
+            if len(args) < 3:
+                await message.channel.send(embed=chogoun_embed("Carta inválida.", "Use `!uno play <carta>`"))
+                return
+            card = args[2]
+            hand = game["hands"][player_id]
+            if card not in hand:
+                await message.channel.send(embed=chogoun_embed("Carta inválida.", "Você não possui essa carta."))
+                return
+            top_card = game["discard_pile"][-1]
+            if not can_play(card, top_card):
+                await message.channel.send(embed=chogoun_embed("Carta inválida.", f"Não pode jogar {card} sobre {top_card}"))
+                return
+            hand.remove(card)
+            game["discard_pile"].append(card)
+            await message.channel.send(embed=chogoun_embed(f"{message.author.display_name} jogou {card}!", f"Topo da pilha: {card}"))
+            game["turn_index"] = (game["turn_index"] + game["direction"]) % len(game["players"])
+            next_player = await self.fetch_user(game["players"][game["turn_index"]])
+            await message.channel.send(f"É a vez de {next_player.mention}")
+            return
+
+        # === UNO HAND ===
+        if message.content.startswith("!uno hand"):
+            game = uno_games.get(message.guild.id)
+            if not game or not game["started"]:
+                await message.channel.send(embed=chogoun_embed("Nenhum jogo em andamento.", "Use `!uno start` e `!uno deal`."))
+                return
+            player_id = message.author.id
+            hand = game["hands"].get(player_id, [])
+            await message.author.send(embed=chogoun_embed("Sua mão 🏔️", ', '.join(hand)))
+            return
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
@@ -320,10 +233,7 @@ intents.voice_states = True
 
 client = Client(intents=intents)
 
-print("TOKEN carregado:", bool(TOKEN))
-print("GROQ carregado:", bool(GROQ_API_KEY))
-
 try:
     client.run(TOKEN)
 except Exception as e:
-    print("ERRO AO INICIAR O BOT:", e)
+    print("Erro ao iniciar bot:", e)
