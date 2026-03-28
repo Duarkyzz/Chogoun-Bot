@@ -143,7 +143,7 @@ Cada atualização representa mais do que uma melhoria técnica — representa *
 - 📊 Dashboard web para controle do bot
 - 🔐 Ferramentas mais robustas de administração e automação
 
-###⚠ ESSAS ATUALIZAÇÕES FUTURAS JÁ IRAM CHEGAR NA PROXIMA ATUALIZAÇÃO, FIQUE DE OLHO EM!⚠
+⚠ ESSAS ATUALIZAÇÕES FUTURAS JÁ IRAM CHEGAR NA PROXIMA ATUALIZAÇÃO, FIQUE DE OLHO EM!⚠
 
 > **O império ainda está sendo erguido.**
 
