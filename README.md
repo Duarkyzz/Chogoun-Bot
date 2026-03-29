@@ -117,10 +117,17 @@ Ferramentas para controle básico de cargos dentro do servidor.
 
 ### 🃏 UNO caso queira algo mais descontraído
 
-- `!uno start ` — Ele inicia uma partida
-- `!uno join` — Você entra na partida criada ou ja existente
-- `!uno deal` — Começa a partida com os jogadores que deram `!join`
-- `!uno play (carta)` — Faz com que você jogue a carta que recebeu
+`!uno start` Começa um novo lobby
+`!uno join` Entra no lobby criado
+`!uno deal` Começa a partida quando todos os jogadores realmente estiverem pronto
+`!uno hand` Você vê sua mão atual enviado via privado
+`!uno status` Fala o status atual da partida
+`!uno draw` Para casa não tenha mais cartas, comprar elas
+`!uno play [Carta]` Jogar a carta que possui em sua mão
+`!uno uno` Declare uno quando realmente tiver uma carta sobrando
+`!uno catch @usuário` Caso o jogador não fale uno, você puni ele por isso
+`!uno leave` Caso desejar sair 
+`!uno end` E caso desejar encerrar a partida
 
 **Exemplo:**
 ```
