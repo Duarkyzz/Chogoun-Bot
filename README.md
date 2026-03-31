@@ -1,5 +1,5 @@
 # 🌄 Chogoun Bot — O Imperador das Montanhas
-### Versão 2.0b
+### Versão 2.5
 
 ---
 
@@ -135,24 +135,6 @@ Ferramentas para controle básico de cargos dentro do servidor.
 ```
 
   Lembrando que as cartas são mandadas pelo proprio Chogoun no privado do usuário
-
----
-
-## 🚧 Expansão do Império
-
-Chogoun ainda não alcançou sua forma final.
-
-Cada atualização representa mais do que uma melhoria técnica — representa **expansão territorial dentro de seu domínio digital**.
-
-### Funcionalidades futuras:
-- 📡 Integração com Twitch
-- 🎫 Sistema de tickets e suporte
-- 📊 Dashboard web para controle do bot
-- 🔐 Ferramentas mais robustas de administração e automação
-
-Uma parte dessas atualizações estão previstas para chegar no dia 07/04
-
-> **O império ainda está sendo erguido.**
 
 ---
 
